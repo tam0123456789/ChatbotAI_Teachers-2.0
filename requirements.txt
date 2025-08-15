@@ -1,0 +1,27 @@
+# --- Web Framework ---
+fastapi
+uvicorn
+python-dotenv
+Jinja2
+python-multipart
+
+# --- Database & ORM ---
+sqlalchemy
+psycopg2-binary # Driver cho PostgreSQL
+
+# --- Security ---
+passlib[bcrypt]
+python-jose[cryptography]
+
+# --- LangChain & AI ---
+langchain
+langchain-google-genai
+langchain_community
+langchain_huggingface
+sentence_transformers
+chromadb>=0.4.22
+
+# --- Data Handling & Scheduling ---
+pandas
+apscheduler
+langchain-openai

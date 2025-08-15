@@ -1,0 +1,18 @@
+﻿ID_Subject,Name_Subject,Number_Lesson,Note
+MAT01,TOÁN,161,Toán
+PHY02,LÝ,51,Lý
+CHE03,HÓA,73,Hóa
+BIO04,SINH,50,Sinh
+IT05,TIN,33,Tin
+LIT06,NGỮ VĂN,156,Ngữ Văn
+HIS07,SỬ,71,Sử
+GEO08,ĐỊA,48,Địa
+ENG09,TIẾNG ANH,116,Tiếng Anh
+NDE10,GD QP-AN,31,Giáo Dục Quốc Phòng
+PE11,GDTC,62,Giáo Dục Thể Chất
+CIV12,GDKT-PL,43,Giáo Dục Kinh Tế - Pháp Luật
+MOS13,MOS,62,Tin học MOS
+TEC14,CÔNG NGHỆ,24,Công Nghệ
+EXA15,HĐTN,124,Hoạt Động Trải Nghiệm
+LOC16,GDĐP,31,Giáo Dục Địa Phương
+NES17,BẢN NGỮ,46,Tiếng Anh Bản Ngữ

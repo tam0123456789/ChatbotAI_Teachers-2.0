@@ -1,0 +1,739 @@
+{% extends "base.html" %}
+
+{% block title %}Trang Quản trị{% endblock %}
+
+{% block head %}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+{% endblock %}
+
+{% block content %}
+<style>
+    /* CSS cho modal tùy chỉnh và hộp thoại thông báo */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none; /* Ẩn mặc định */
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+    .modal-content {
+        background-color: var(--surface-light);
+        padding: 32px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+    }
+    
+    .crud-modal-content {
+        background-color: var(--surface-light);
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        width: 90%;
+    }
+
+    .crud-modal-content h3 {
+        margin-bottom: 24px;
+        text-align: center;
+    
+    .crud-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .form-group label {
+        font-weight: 500;
+        margin-bottom: 4px;
+    }
+    
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 16px;
+    }
+    
+    .form-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin-top: 24px;
+    }
+    
+    .modal-content h3 {
+        margin-bottom: 16px;
+        color: var(--text-primary);
+    }
+
+  .admin-container {
+    min-height: calc(100vh - 0px);
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1200px;
+    margin: 32px auto 0 auto;
+    padding: 24px 16px 16px 16px;
+    background: #f3f6fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .table-container {
+    min-width: 0;
+    min-height: 300px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    padding: 16px 0 8px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  #admin-table-content {
+    min-width: 0;
+    min-height: 200px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1200px;
+    overflow-x: auto;
+    margin: 0 auto;
+  }
+        color: var(--text-primary);
+    }
+
+    .btn-cancel:hover {
+        background-color: #d1d1d1;
+    }
+
+    .btn-confirm {
+        background-color: #d93025;
+        color: var(--on-primary);
+    }
+
+    .btn-confirm:hover {
+        background-color: #c5221f;
+    }
+    
+    .admin-container {
+        padding: 24px;
+    }
+
+    .admin-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 24px;
+        width: 100%;
+        text-align: center;
+        gap: 16px;
+    }
+    
+    .admin-header h1 {
+        flex: 1;
+        text-align: center;
+        margin: 0;
+    }
+    
+    .admin-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px;
+        border-bottom: 2px solid var(--border-color);
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 4px;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .tab-button {
+        padding: 12px 24px;
+        border: none;
+        background-color: transparent;
+        color: var(--text-secondary);
+        font-weight: 500;
+        font-size: 16px;
+        cursor: pointer;
+        transition: color 0.2s, border-bottom 0.2s;
+        border-bottom: 2px solid transparent;
+        position: relative;
+        bottom: -2px;
+    }
+
+    .tab-button:hover {
+        color: var(--primary-color);
+    }
+
+    .tab-button.active {
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--primary-color);
+    }
+
+    .table-container {
+        background-color: var(--surface-light);
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        overflow-x: auto; /* Thêm cuộn ngang */
+    }
+    
+    .table-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 16px;
+        width: 100%;
+        gap: 16px;
+        text-align: center;
+    }
+
+    #admin-table-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 16px;
+        text-align: center;
+    }
+
+    #admin-table-content th, #admin-table-content td {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border-color);
+        font-size: 14px;
+        text-align: center;
+    }
+
+    #admin-table-content th {
+        background-color: #f8f9fa;
+        font-weight: 500;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+    }
+    
+    .btn-edit, .btn-delete {
+        border: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-right: 8px;
+    }
+
+    .btn-edit {
+        background-color: #1a73e8;
+        color: white;
+    }
+    
+    .btn-edit:hover {
+        background-color: #1669d6;
+    }
+
+    .btn-delete {
+        background-color: #d93025;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background-color: #c5221f;
+    }
+
+    #message-box {
+    left: 50%;
+    right: auto !important;
+    transform: translate(-50%, -20px);
+    text-align: center;
+  }
+</style>
+
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>Bảng điều khiển của Quản trị viên</h1>
+        <button class="btn btn-cancel" id="logout-btn">Đăng xuất</button>
+    </div>
+    <p>Chọn một bảng để xem và quản lý dữ liệu.</p>
+
+    <div class="admin-tabs">
+        <button class="tab-button active" onclick="loadTable('teachers', this)">Giáo viên</button>
+        <button class="tab-button" onclick="loadTable('subjects', this)">Môn học</button>
+        <button class="tab-button" onclick="loadTable('classes', this)">Lớp học</button>
+        <button class="tab-button" onclick="loadTable('students', this)">Học sinh</button>
+        <button class="tab-button" onclick="loadTable('times', this)">Thời gian</button>
+        <button class="tab-button" onclick="loadTable('schedule_entries', this)">Thời khóa biểu</button>
+    </div>
+
+    <div class="table-container">
+        <div class="table-header">
+            <h3 id="table-title">Bảng: teachers</h3>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-primary" id="add-new-btn">Thêm mới</button>
+                <button class="btn btn-cancel" id="refresh-btn" title="Làm mới dữ liệu">Làm mới</button>
+            </div>
+        </div>
+        <div id="admin-table-content">
+            <!-- Dữ liệu bảng sẽ được tải vào đây bằng JavaScript -->
+            <div style="text-align: center; padding: 24px;">Đang tải dữ liệu...</div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xác nhận xóa -->
+<div id="delete-confirm-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Xác nhận xóa</h3>
+        <p id="modal-message">Bạn có chắc chắn muốn xóa bản ghi này?</p>
+        <div class="modal-buttons">
+            <button id="modal-cancel-btn" class="btn btn-cancel">Hủy</button>
+            <button id="modal-confirm-btn" class="btn btn-confirm">Xóa</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal thêm/sửa -->
+<div id="crud-modal" class="modal-overlay">
+    <div class="crud-modal-content">
+        <h3 id="crud-modal-title"></h3>
+        <form id="crud-form" class="crud-form">
+            <!-- Form inputs sẽ được tạo tự động bằng JS -->
+            <div id="form-inputs-container"></div>
+            <div class="form-buttons">
+                <button type="button" id="form-cancel-btn" class="btn btn-cancel">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Hộp thoại thông báo -->
+<div id="message-box" style="
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    display: none;
+    z-index: 1001;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transform: translateY(-20px);
+    opacity: 0;
+"></div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let currentTableName = 'teachers';
+
+    // Nút đăng xuất
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                window.location.href = '/logout';
+            });
+        }
+    });
+    let currentTableHeaders = [];
+    let currentPrimaryKey = '';
+
+    // Hàm để hiển thị hộp thoại thông báo tùy chỉnh
+    function showMessage(message, type) {
+        const msgBox = document.getElementById('message-box');
+        msgBox.innerText = message;
+        
+        // Thiết lập màu sắc dựa trên loại thông báo
+        if (type === 'success') {
+            msgBox.style.backgroundColor = '#34A853'; // Google green
+        } else {
+            msgBox.style.backgroundColor = '#EA4335'; // Google red
+        }
+
+        // Hiển thị hộp thoại với animation
+        msgBox.style.display = 'block';
+        setTimeout(() => {
+            msgBox.style.transform = 'translateY(0)';
+            msgBox.style.opacity = '1';
+        }, 10);
+
+        // Ẩn hộp thoại sau 3 giây
+        setTimeout(() => {
+            msgBox.style.transform = 'translateY(-20px)';
+            msgBox.style.opacity = '0';
+            setTimeout(() => {
+                msgBox.style.display = 'none';
+            }, 300);
+        }, 3000);
+    }
+    
+    // Hàm để hiển thị modal xác nhận xóa
+    function showConfirmModal(message, onConfirm) {
+        const modal = document.getElementById('delete-confirm-modal');
+        const modalMessage = document.getElementById('modal-message');
+        const confirmBtn = document.getElementById('modal-confirm-btn');
+        const cancelBtn = document.getElementById('modal-cancel-btn');
+
+        modalMessage.innerText = message;
+        modal.style.display = 'flex';
+
+        const handleCancel = () => {
+            modal.style.display = 'none';
+            confirmBtn.removeEventListener('click', handleConfirm);
+            cancelBtn.removeEventListener('click', handleCancel);
+        };
+        cancelBtn.addEventListener('click', handleCancel);
+
+        const handleConfirm = () => {
+            onConfirm();
+            modal.style.display = 'none';
+            confirmBtn.removeEventListener('click', handleConfirm);
+            cancelBtn.removeEventListener('click', handleCancel);
+        };
+        confirmBtn.addEventListener('click', handleConfirm);
+
+        modal.onclick = (event) => {
+            if (event.target === modal) {
+                handleCancel();
+            }
+        };
+    }
+
+    // Hàm để mở modal thêm/sửa
+    function openCrudModal(title, rowData = {}) {
+        const modal = document.getElementById('crud-modal');
+        const modalTitle = document.getElementById('crud-modal-title');
+        const formInputsContainer = document.getElementById('form-inputs-container');
+        const form = document.getElementById('crud-form');
+        
+        modalTitle.innerText = title;
+        formInputsContainer.innerHTML = '';
+
+        // Nếu rowData có khóa chính => là sửa, ngược lại là thêm mới
+        const isEdit = !!rowData[currentPrimaryKey];
+
+        currentTableHeaders.forEach(header => {
+            const isPrimaryKey = header === currentPrimaryKey;
+            const value = rowData[header] || '';
+            // Khi thêm mới: khóa chính không readonly, khi sửa: readonly
+            const isReadOnly = isPrimaryKey && isEdit;
+            formInputsContainer.innerHTML += `
+                <div class="form-group">
+                    <label for="input-${header}">${header}</label>
+                    <input type="text" id="input-${header}" name="${header}" value="${value}" ${isReadOnly ? 'readonly' : ''} required>
+                </div>
+            `;
+        });
+
+        form.dataset.pkVal = isEdit ? rowData[currentPrimaryKey] : '';
+        form.dataset.tableName = currentTableName;
+        modal.style.display = 'flex';
+    }
+    
+    // Đóng modal thêm/sửa
+    document.getElementById('form-cancel-btn').addEventListener('click', () => {
+        document.getElementById('crud-modal').style.display = 'none';
+    });
+    
+    // Đóng modal khi click ra ngoài
+    document.getElementById('crud-modal').onclick = (event) => {
+        if (event.target === document.getElementById('crud-modal')) {
+            document.getElementById('crud-modal').style.display = 'none';
+        }
+    };
+    
+    // Gán sự kiện cho nút "Thêm mới"
+    document.getElementById('add-new-btn').addEventListener('click', () => {
+        openCrudModal('Thêm mới bản ghi');
+    });
+
+    // Phân trang: mỗi trang 20 hàng
+    let currentPage = 1;
+    let currentData = [];
+    const ROWS_PER_PAGE = 20;
+
+    async function loadTable(tableName, element, page = 1) {
+        // Cập nhật trạng thái active cho button
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        element.classList.add('active');
+
+        currentTableName = tableName;
+        currentPage = page;
+        // Xác định khóa chính của bảng
+        const pkMap = {
+            'teachers': 'ID_Teacher',
+            'subjects': 'ID_Subject',
+            'classes': 'ID_Class',
+            'students': 'Student',
+            'times': 'ID_Time',
+            'schedule_entries': 'ID_Schedule'
+        };
+        currentPrimaryKey = pkMap[tableName] || '';
+
+        document.getElementById('table-title').innerText = `Bảng: ${tableName}`;
+        const contentDiv = document.getElementById('admin-table-content');
+        contentDiv.innerHTML = '<div style="text-align: center; padding: 24px;">Đang tải dữ liệu...</div>';
+
+        try {
+            const response = await fetch(`/api/tables/${tableName}`);
+            if (!response.ok) {
+                throw new Error('Lỗi khi tải dữ liệu bảng.');
+            }
+            const data = await response.json();
+            currentData = data;
+
+            if (data.length === 0) {
+                contentDiv.innerHTML = '<p style="text-align: center; padding: 24px;">Không có dữ liệu.</p>';
+                currentTableHeaders = [];
+                return;
+            }
+
+            currentTableHeaders = Object.keys(data[0]);
+            // Tính tổng số trang
+            const totalPages = Math.ceil(data.length / ROWS_PER_PAGE);
+            // Lấy dữ liệu trang hiện tại
+            const startIdx = (currentPage - 1) * ROWS_PER_PAGE;
+            const endIdx = startIdx + ROWS_PER_PAGE;
+            const pageData = data.slice(startIdx, endIdx);
+
+            // Tạo bảng HTML với cuộn ngang
+            let tableHtml = '<div style="overflow-x:auto; max-height: 500px; overflow-y:auto;"><table><thead><tr>';
+            currentTableHeaders.forEach(header => {
+                tableHtml += `<th>${header}</th>`;
+            });
+            tableHtml += `<th>Thao tác</th>`;
+            tableHtml += '</tr></thead><tbody>';
+
+            // Tạo các hàng dữ liệu cho trang hiện tại
+            pageData.forEach(row => {
+                tableHtml += '<tr>';
+                currentTableHeaders.forEach(header => {
+                    tableHtml += `<td>${row[header]}</td>`;
+                });
+                const pk_val = row[currentPrimaryKey];
+                tableHtml += `<td>
+                    <button class="btn-edit" onclick='handleEdit(${JSON.stringify(row)})'>Sửa</button>
+                    <button class="btn-delete" onclick="handleDelete('${currentTableName}', '${currentPrimaryKey}', '${pk_val}')">Xóa</button>
+                </td>`;
+                tableHtml += '</tr>';
+            });
+            tableHtml += '</tbody></table></div>';
+
+            // Thêm phân trang nếu cần
+            if (totalPages > 1) {
+                tableHtml += '<div style="display:flex;justify-content:center;align-items:center;margin-top:16px;gap:8px;">';
+                tableHtml += `<button class="btn" style="min-width:40px;" onclick="changePage(1)" ${currentPage === 1 ? 'disabled' : ''}>&laquo;</button>`;
+                tableHtml += `<button class="btn" style="min-width:40px;" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>&lsaquo;</button>`;
+                // Hiển thị số trang (tối đa 5 số gần trang hiện tại)
+                let startPage = Math.max(1, currentPage - 2);
+                let endPage = Math.min(totalPages, currentPage + 2);
+                if (currentPage <= 3) endPage = Math.min(5, totalPages);
+                if (currentPage >= totalPages - 2) startPage = Math.max(1, totalPages - 4);
+                for (let i = startPage; i <= endPage; i++) {
+                    tableHtml += `<button class="btn${i === currentPage ? ' btn-primary' : ''}" style="min-width:32px;" onclick="changePage(${i})">${i}</button>`;
+                }
+                tableHtml += `<button class="btn" style="min-width:40px;" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>&rsaquo;</button>`;
+                tableHtml += `<button class="btn" style="min-width:40px;" onclick="changePage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}>&raquo;</button>`;
+                tableHtml += '</div>';
+            }
+
+            contentDiv.innerHTML = tableHtml;
+
+        } catch (error) {
+            contentDiv.innerHTML = `<p style="color: #EA4335; text-align: center; padding: 24px;">Lỗi: ${error.message}</p>`;
+        }
+    }
+
+    // Hàm đổi trang
+    window.changePage = function(page) {
+        if (!currentData.length) return;
+        const totalPages = Math.ceil(currentData.length / ROWS_PER_PAGE);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        // Gọi lại loadTable nhưng không fetch lại dữ liệu, chỉ render lại bảng
+        renderTablePage();
+    }
+
+    function renderTablePage() {
+        const contentDiv = document.getElementById('admin-table-content');
+        if (!currentData.length) return;
+        const totalPages = Math.ceil(currentData.length / ROWS_PER_PAGE);
+        const startIdx = (currentPage - 1) * ROWS_PER_PAGE;
+        const endIdx = startIdx + ROWS_PER_PAGE;
+        const pageData = currentData.slice(startIdx, endIdx);
+        let tableHtml = '<div style="overflow-x:auto; max-height: 500px; overflow-y:auto;"><table><thead><tr>';
+        currentTableHeaders.forEach(header => {
+            tableHtml += `<th>${header}</th>`;
+        });
+        tableHtml += `<th>Thao tác</th>`;
+        tableHtml += '</tr></thead><tbody>';
+        pageData.forEach(row => {
+            tableHtml += '<tr>';
+            currentTableHeaders.forEach(header => {
+                tableHtml += `<td>${row[header]}</td>`;
+            });
+            const pk_val = row[currentPrimaryKey];
+            tableHtml += `<td>
+                <button class="btn-edit" onclick='handleEdit(${JSON.stringify(row)})'>Sửa</button>
+                <button class="btn-delete" onclick="handleDelete('${currentTableName}', '${currentPrimaryKey}', '${pk_val}')">Xóa</button>
+            </td>`;
+            tableHtml += '</tr>';
+        });
+        tableHtml += '</tbody></table></div>';
+        // Thêm phân trang nếu cần
+        if (totalPages > 1) {
+            tableHtml += '<div style="display:flex;justify-content:center;align-items:center;margin-top:16px;gap:8px;">';
+            tableHtml += `<button class="btn" style="min-width:40px;" onclick="changePage(1)" ${currentPage === 1 ? 'disabled' : ''}>&laquo;</button>`;
+            tableHtml += `<button class="btn" style="min-width:40px;" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>&lsaquo;</button>`;
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+            if (currentPage <= 3) endPage = Math.min(5, totalPages);
+            if (currentPage >= totalPages - 2) startPage = Math.max(1, totalPages - 4);
+            for (let i = startPage; i <= endPage; i++) {
+                tableHtml += `<button class="btn${i === currentPage ? ' btn-primary' : ''}" style="min-width:32px;" onclick="changePage(${i})">${i}</button>`;
+            }
+            tableHtml += `<button class="btn" style="min-width:40px;" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>&rsaquo;</button>`;
+            tableHtml += `<button class="btn" style="min-width:40px;" onclick="changePage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}>&raquo;</button>`;
+            tableHtml += '</div>';
+        }
+        contentDiv.innerHTML = tableHtml;
+    }
+    
+    // Xử lý khi nhấn nút Sửa
+    function handleEdit(rowData) {
+        openCrudModal('Chỉnh sửa bản ghi', rowData);
+    }
+
+    // Hàm xử lý khi nhấn nút xóa
+    function handleDelete(tableName, pk_col, pk_val) {
+        const message = `Bạn có chắc chắn muốn xóa bản ghi '${pk_val}' khỏi bảng '${tableName}'?`;
+        showConfirmModal(message, () => {
+            deleteEntry(tableName, pk_col, pk_val);
+        });
+    }
+
+    // Hàm thực hiện xóa một bản ghi sau khi xác nhận
+    async function deleteEntry(table, pk_col, pk_val) {
+        try {
+            const response = await fetch('/api/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ table, pk_col, pk_val })
+            });
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                showMessage(result.message, 'success');
+                // Tải lại bảng hiện tại
+                loadTable(currentTableName, document.querySelector('.tab-button.active'));
+            } else {
+                showMessage(result.message, 'error');
+            }
+        } catch (error) {
+            showMessage('Lỗi khi thực hiện yêu cầu xóa.', 'error');
+        }
+    }
+    
+    // Gán sự kiện submit cho form
+    document.getElementById('crud-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const form = event.target;
+        const pk_val = form.dataset.pkVal;
+        const tableName = form.dataset.tableName;
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+
+        // Hiển thị loading trên nút Lưu
+        const saveBtn = form.querySelector('button[type="submit"]');
+        const oldBtnText = saveBtn.innerText;
+        saveBtn.disabled = true;
+        saveBtn.innerText = 'Đang lưu...';
+
+        // Nếu có pk_val => sửa, ngược lại thêm mới
+        const isEdit = !!pk_val;
+        const url = isEdit ? '/api/update' : '/api/add';
+
+        // Đúng key cho backend: 'values' thay vì 'data'
+        const payload = {
+            table: tableName,
+            values: data
+        };
+        if (isEdit) {
+            payload.pk_col = currentPrimaryKey;
+            payload.pk_val = pk_val;
+        }
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (result.status === 'success') {
+                showMessage(result.message, 'success');
+                document.getElementById('crud-modal').style.display = 'none';
+                // Đợi 300ms để UX mượt hơn
+                setTimeout(() => {
+                    loadTable(currentTableName, document.querySelector('.tab-button.active'));
+                }, 300);
+            } else {
+                showMessage(result.message, 'error');
+            }
+        } catch (error) {
+            showMessage('Lỗi khi thực hiện yêu cầu.', 'error');
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.innerText = oldBtnText;
+        }
+    });
+
+    // Nút làm mới project (reload lại bảng hiện tại)
+    document.getElementById('refresh-btn').addEventListener('click', async () => {
+        showMessage('Đang khởi động lại hệ thống...', 'success');
+        try {
+            const response = await fetch('/api/restart', { method: 'POST' });
+            const result = await response.json();
+            if (result.status === 'success') {
+                showMessage('Hệ thống đã được khởi động lại thành công!', 'success');
+                // Có thể reload lại bảng sau khi backend đã restart (nếu cần)
+                setTimeout(() => {
+                    loadTable(currentTableName, document.querySelector('.tab-button.active'), 1);
+                }, 2000);
+            } else {
+                showMessage(result.message || 'Không thể khởi động lại hệ thống.', 'error');
+            }
+        } catch (error) {
+            showMessage('Lỗi khi gửi yêu cầu khởi động lại hệ thống.', 'error');
+        }
+    });
+
+    // Tải bảng đầu tiên khi trang được mở
+    document.addEventListener('DOMContentLoaded', () => {
+        loadTable('teachers', document.querySelector('.tab-button.active'), 1);
+    });
+</script>
+{% endblock %}

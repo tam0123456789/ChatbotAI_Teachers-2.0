@@ -1,0 +1,54 @@
+﻿ID_Teacher,Name_Teacher,ID_Subject_1,ID_Subject_2,ID_Subject_3
+GV01,Huỳnh Ngọc Phụng,MAT01,EXA15,
+GV02,Lê Văn Phương,MAT01,EXA15,
+GV03,Lương Thị Liên,MAT01,EXA15,
+GV04,Nguyễn Huỳnh Thành Nhân,MAT01,EXA15,
+GV05,Nguyễn Minh Trung,MAT01,EXA15,
+GV06,Nguyễn Văn Tâm,MAT01,EXA15,
+GV07,Phan Huỳnh Phương Thuý,MAT01,,
+GV08,Phan Tuyết Nhi,MAT01,,
+GV09,Lê Bá Tuấn,PHY02,TEC14,
+GV10,Nguyễn Quốc Minh,PHY02,EXA15,
+GV11,Nguyễn Thị Thanh Xuân,PHY02,EXA15,
+GV12,Trần Thanh Lan,PHY02,EXA15,
+GV13,Trần Thanh Sang,PHY02,TEC14,
+GV14,Lê Thị Hương,CHE03,EXA15,
+GV15,Nguyễn Minh Phương,CHE03,EXA15,
+GV16,Nguyễn Thị Thùy Trang,CHE03,EXA15,
+GV17,Phạm Văn Thiện,CHE03,,LOC16
+GV18,Văn Thị Trà My,CHE03,,
+GV19,Đặng Kim Thi,BIO04,TEC14,
+GV20,Ngô Thị Ngọc Sương,BIO04,TEC14,
+GV21,Dương Đình Dẫn,MOS13,,
+GV22,Lê Thanh Tuấn,IT05,MOS13,
+GV23,Nguyễn Nhựt Quang,IT05,MOS13,
+GV24,Nguyễn Văn Tam,MOS13,,
+GV25,Đào Thị Loan,LIT06,EXA15,
+GV26,Lê Thị Ngà,LIT06,EXA15,
+GV27,Mai Tường Vi,LIT06,EXA15,
+GV28,Nguyễn Lê Ngọc Trinh,LIT06,EXA15,
+GV29,Tô Thị Phương Yến,LIT06,EXA15,
+GV30,Trần Thị Bích Chi,LIT06,EXA15,
+GV31,Vũ Tín Trung,LIT06,EXA15,
+GV32,Âu Thị Hiền,HIS07,EXA15,
+GV33,Chế Hoàng Huy,HIS07,EXA15,
+GV34,Lê Đức Tiến,HIS07,EXA15,LOC16
+GV35,Tô Thanh Giàu,HIS07,,
+GV36,Lê Xuân Quyến,GEO08,,
+GV37,Nguyễn Ngọc Thắm,GEO08,EXA15,
+GV38,Nguyễn Thị Ngọc Nhi,GEO08,,
+GV39,Đặng Ánh Như,ENG09,EXA15,NES17
+GV40,Huỳnh Thanh Lâm,ENG09,EXA15,NES17
+GV41,Huỳnh Trọng Nhật,ENG09,EXA15,NES17
+GV42,Nguyễn Hoàng Linh,ENG09,NES17,
+GV43,Nguyễn Hữu Châu,ENG09,NES17,
+GV44,Phạm Nguyễn Ngọc Mai,ENG09,EXA15,NES17
+GV45,Tạ Xuân Ngân,ENG09,EXA15,NES17
+GV46,Lê Nhật Trường,NDE10,,
+GV47,Phạm Nhâm Ngọ,NDE10,LOC16,
+GV48,Danh Phố,PE11,,
+GV49,Lưu Thị Hiệp,PE11,,
+GV50,Nguyễn Thanh Phong,PE11,,
+GV51,Đỗ Thị Kim Phượng,CIV12,EXA15,LOC16
+GV52,Huỳnh Thị Thanh Thuý,CIV12,,
+GV53,Võ Thị Tuyết Mai,CIV12,EXA15,LOC16
